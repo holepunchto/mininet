@@ -1,7 +1,7 @@
-var http = require('http')
-var mn = require('../host')
+const http = require('http')
+const mn = require('../host')
 
-var server = http.createServer(function (req, res) {
+const server = http.createServer(function (req, res) {
   console.log('Server responding')
   res.end('Hello from server!\n')
 })

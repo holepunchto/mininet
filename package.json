@@ -4,15 +4,20 @@
   "description": "Spin up and interact with virtual networks using Mininet and Node.js",
   "main": "index.js",
   "dependencies": {
+    "lunte": "^1.4.0",
     "ndjson": "^1.5.0",
+    "prettier-config-holepunch": "^2.0.0",
     "pump": "^2.0.0",
     "split2": "^2.2.0"
   },
   "devDependencies": {
+    "prettier": "^3.7.4",
     "standard": "^10.0.3"
   },
   "scripts": {
-    "test": "standard"
+    "format": "prettier . --write",
+    "test": "prettier . --check && lunte",
+    "lint": "lunte"
   },
   "repository": {
     "type": "git",

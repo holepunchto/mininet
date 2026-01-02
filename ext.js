@@ -1,16 +1,16 @@
 'use strict'
 
 class RemoteError extends Error {
-  constructor ({ message, stack, name, type, ...rest }) {
+  constructor({ message, stack, name, type, ...rest }) {
     super(message)
-    var localStack = this.stack
+    const localStack = this.stack
     this.stack = 'REMOTE STACK:\n' + stack + '\nLOCAL STACK:\n' + localStack
     this.remoteName = name
     Object.assign(this, rest)
   }
 }
 
-function serializeError (k, v) {
+function serializeError(k, v) {
   if (v instanceof Error) {
     return {
       ...v,
@@ -23,8 +23,8 @@ function serializeError (k, v) {
   return v
 }
 
-function parseExtendedTypes (k, v) {
-  if (v == null || typeof v !== 'object') return v
+function parseExtendedTypes(k, v) {
+  if (v === null || typeof v !== 'object') return v
   if (v.type === 'MininetSerializedError') {
     return new RemoteError(v)
   }

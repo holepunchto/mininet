@@ -9,17 +9,17 @@ npm install mininet
 
 ## Usage
 
-``` js
-var mininet = require('mininet')
+```js
+const mininet = require('mininet')
 
-var mn = mininet()
+const mn = mininet()
 
 // create a switch
-var s1 = mn.createSwitch()
+const s1 = mn.createSwitch()
 
 // create some hosts
-var h1 = mn.createHost()
-var h2 = mn.createHost()
+const h1 = mn.createHost()
+const h2 = mn.createHost()
 
 // link them to the switch
 h1.link(s1)
@@ -29,11 +29,11 @@ h2.link(s1)
 mn.start()
 
 // run a server in node
-var proc = h1.spawn('node server.js')
+const proc = h1.spawn('node server.js')
 
 proc.on('message:listening', function () {
   // when h1 signals it is listening, run curl
-  var proc2 = h2.spawn('curl --silent ' + h1.ip + ':10000')
+  const proc2 = h2.spawn('curl --silent ' + h1.ip + ':10000')
 
   proc2.on('stdout', function (data) {
     process.stdout.write('h2 ' + data)
@@ -44,16 +44,15 @@ proc.on('message:listening', function () {
 proc.on('stdout', function (data) {
   process.stdout.write('h1 ' + data)
 })
-
 ```
 
 Assuming server.js looks like this
 
-``` js
-var http = require('http')
-var mn = require('mininet/host')
+```js
+const http = require('http')
+const mn = require('mininet/host')
 
-var server = http.createServer(function (req, res) {
+const server = http.createServer(function (req, res) {
   console.log('Server responding')
   res.end('hello from server\n')
 })
@@ -66,14 +65,14 @@ server.listen(10000, function () {
 
 ## API
 
-#### `var mn = mininet([options])`
+#### `const mn = mininet([options])`
 
 Create a new mininet instance. Options include
 
-``` js
+```js
 {
   clean: false,         // if true run mn -c first
-  sudo: true,           // use sudo if needed 
+  sudo: true,           // use sudo if needed
   sock: '/tmp/mn.sock', // explictly set the .sock file used
   debug: false,         // set to true to enable debug output
   stdio: null,          // passed to host.spawn as a default option
@@ -106,7 +105,7 @@ Array of all created switches.
 
 Array of all created hosts.
 
-#### `var sw = mn.createSwitch()`
+#### `const sw = mn.createSwitch()`
 
 Create a new switch
 
@@ -115,7 +114,7 @@ Create a new switch
 Link the switch with another switch or host.
 Options include:
 
-``` js
+```js
 {
   bandwidth: 10,  // use 10mbit link
   delay: '100ms', // 100ms delay
@@ -124,7 +123,7 @@ Options include:
 }
 ```
 
-#### `var host = mn.createHost()`
+#### `const host = mn.createHost()`
 
 Create an new host
 
@@ -145,12 +144,12 @@ Takes the same options as `sw.link`.
 
 Execute a command and buffer the output and return it in the callback.
 
-#### `var proc = host.spawn(cmd, [options])`
+#### `const proc = host.spawn(cmd, [options])`
 
 Spawn a new process to run the in background of the host.
 Options include:
 
-``` js
+```js
 {
   stdio: 'inherit', // set this to forward stdio
   prefixStdio: 'some-prefix' // all stdio is prefixed with this
@@ -160,18 +159,21 @@ Options include:
 If you set `prefixStdio: true` it will be converted to `{host.id}.{process.id}`.
 When debugging it can be useful to set both `{stdio: 'inherit', prefixStdio: true}`.
 
-#### `var proc = host.spawnNode(programSource, [options])`
+#### `const proc = host.spawnNode(programSource, [options])`
 
 Helper that spawns a Node.js source inside the host. Useful when using multiline strings
 
-``` js
-host.spawnNode(`
+```js
+host.spawnNode(
+  `
   console.log('starting timer...')
   setInterval(() => console.log('Time is', Date.now()))
-`, {
-  stdio: 'inherit',
-  prefixStdio: true
-})
+`,
+  {
+    stdio: 'inherit',
+    prefixStdio: true
+  }
+)
 ```
 
 #### `proc.id`
@@ -208,7 +210,7 @@ Emitted when the process exits.
 If you are spawning a node process you can require `mininet/host`
 to communicate with the host.
 
-#### `var host = require('mininet/host')`
+#### `const host = require('mininet/host')`
 
 Require this in a spawned process.
 
@@ -229,7 +231,7 @@ Send a message to all processes.
 Emitted when a message is received from the host.
 The metadata argument contains the following data
 
-``` js
+```js
 {
   from: 'some-process-id-or-host' // who sent this message
 }

@@ -1,11 +1,9 @@
-var net = require('net')
-var split = require('split2')
-var events = require('events')
-var ext = require('./ext')
-var parseExtendedTypes = ext.parseExtendedTypes
-var serializeError = ext.serializeError
+const net = require('net')
+const split = require('split2')
+const events = require('events')
+const { parseExtendedTypes, serializeError } = require('./ext')
 
-var sock = net.connect(process.env.MN_SOCK)
+const sock = net.connect(process.env.MN_SOCK)
 
 sock.write(process.env.MN_HEADER + '\n')
 sock.pipe(split()).on('data', function (data) {
@@ -14,7 +12,7 @@ sock.pipe(split()).on('data', function (data) {
   } catch (err) {
     return
   }
-  var opts = { from: data.from }
+  const opts = { from: data.from }
   exports.emit('message', data.name, data.data, opts)
   exports.emit('message:' + data.name, data.data, opts)
 })

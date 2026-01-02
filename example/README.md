@@ -33,5 +33,5 @@ npm i
 cd example
 poetry install
 eval $(poetry env activate)
-node ./example.js
+poetry run sudo node example.js # gives clean output
 ```

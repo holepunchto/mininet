@@ -11,8 +11,7 @@
     "split2": "^2.2.0"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
-    "standard": "^10.0.3"
+    "prettier": "^3.7.4"
   },
   "scripts": {
     "format": "prettier . --write",

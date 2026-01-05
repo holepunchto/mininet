@@ -20,12 +20,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mafintosh/mininet.git"
+    "url": "https://github.com/holepunchto/mininet.git"
   },
-  "author": "Mathias Buus (@mafintosh)",
+  "author": "Holepunch Inc",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mafintosh/mininet/issues"
+    "url": "https://github.com/holepunchto/mininet/issues"
   },
-  "homepage": "https://github.com/mafintosh/mininet"
+  "homepage": "https://github.com/holepunchto/mininet"
 }

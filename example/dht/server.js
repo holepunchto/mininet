@@ -1,5 +1,5 @@
 const DHT = require('hyperdht')
-const mn = require('../host')
+const mn = require('../../host')
 
 async function main() {
   const node = DHT.bootstrapper(49737, '127.0.0.1')
@@ -8,10 +8,6 @@ async function main() {
     console.log('Bootstrapper running on port ' + node.address().port)
   })
 
-  const bootstrap = [{ host: '127.0.0.1', port: node.address().port }]
-
-  const persistent1 = new DHT({ bootstrap, ephemeral: false })
-  await persistent1.fullyBootstrapped()
   console.log('ready')
 
   mn.send('listening')

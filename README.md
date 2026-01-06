@@ -10,7 +10,7 @@ npm install mininet
 ## Usage
 
 ```js
-const mininet = require('mininet')
+const Mininet = require('mininet')
 
 const mn = new Mininet()
 

@@ -251,6 +251,7 @@ class Switch {
     if (opts.bw !== undefined) line += ', bw=' + opts.bw
     if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
     if (opts.loss !== undefined) line += ', loss=' + opts.loss
+    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
     if (opts.htb || opts.useHtb) line += ', use_htb=True'
 
     this._mn._exec(`
@@ -385,6 +386,7 @@ class Host extends EventEmitter {
     if (opts.bw !== undefined) line += ', bw=' + opts.bw
     if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
     if (opts.loss !== undefined) line += ', loss=' + opts.loss
+    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
     if (opts.htb || opts.useHtb) line += ', use_htb=True'
 
     this._mn._exec(`

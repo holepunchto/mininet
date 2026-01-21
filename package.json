@@ -15,19 +15,15 @@
     "process": {
       "bare": "bare-process",
       "default": "process"
-    },
-    "string_decoder": {
-      "bare": "bare-string-decoder",
-      "default": "string_decoder"
     }
   },
   "dependencies": {
     "bare-events": "^2.8.2",
     "bare-net": "^2.2.0",
     "bare-process": "^4.2.2",
-    "bare-string-decoder": "^1.0.0",
     "lunte": "^1.4.0",
     "ndjson": "^1.5.0",
+    "newline-decoder": "^1.0.2",
     "prettier-config-holepunch": "^2.0.0",
     "pump": "^2.0.0",
     "streamx": "^2.23.0"

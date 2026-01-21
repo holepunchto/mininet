@@ -1,31 +1,18 @@
 const { Transform } = require('streamx')
-const { StringDecoder } = require('string_decoder')
-
-const matcher = /\r?\n/
+const NewlineDecoder = require('newline-decoder')
 
 function split() {
-  let last = ''
-  const decoder = new StringDecoder('utf8')
-
+  const decoder = new NewlineDecoder()
   return new Transform({
     transform(chunk, cb) {
-      last += decoder.write(chunk)
-
-      const list = last.split(matcher)
-      last = list.pop()
-
-      for (const item of list) {
-        if (item !== undefined) this.push(item)
+      for (const line of decoder.push(chunk)) {
+        this.push(line)
       }
-
       cb()
     },
-
     flush(cb) {
-      last += decoder.end()
-      if (last) {
-        if (item !== undefined) this.push(item)
-      }
+      const last = decoder.end()
+      if (last) this.push(last)
       cb()
     }
   })

@@ -27,6 +27,7 @@ class Mininet extends EventEmitter {
     this._server = null
     this._args = ['python', '-i']
     this._debug = !!opts.debug
+    this._internet = !!opts.internet
     if (opts.clean) this._args.unshift(path.join(__dirname, 'clean.sh'))
     if (process.getuid() && opts.sudo !== false) {
       this._args.unshift('sudo', '-E')
@@ -85,8 +86,9 @@ class Mininet extends EventEmitter {
       this._python.stderr.resume()
       if (this._debug) this._python.stderr.pipe(process.stderr)
       this._python.stdout.pipe(split()).on('data', this._parse.bind(this))
-      this._python.stdin.write(
-        trim(`
+
+      const output = this._internet
+        ? `
         try:
           import json
           from mininet.topo import Topo
@@ -105,17 +107,53 @@ class Mininet extends EventEmitter {
 
         def net_start():
           try:
+            nat = net.addNAT(ip='10.0.0.254/24')
+            if net.switches:
+              net.addLink(nat, net.switches[0])
             net.start()
             result = []
             for h in net.hosts:
-              result.append({'name': h.name, 'ip': h.IP(), 'mac': h.MAC()})
+              if h.name != 'nat0':
+                h.setDefaultRoute('via 10.0.0.254')
+                h.cmd('echo "nameserver 8.8.8.8" > /etc/resolv.conf')
+                result.append({'name': h.name, 'ip': h.IP(), 'mac': h.MAC()})
             print("ack", json.dumps(result))
           except:
             print("err", json.dumps("start failed"))
 
         net = Mininet(link=TCLink, switch=OVSBridge, controller=findController())
-      `)
-      )
+      `
+        : `
+      try:
+        import json
+        from mininet.topo import Topo
+        from mininet.net import Mininet
+        from mininet.node import findController
+        from mininet.node import OVSBridge
+        from mininet.link import Link, TCLink, OVSLink
+      except:
+        exit(10)
+
+      def print_host(h):
+        try:
+          print("ack", json.dumps({'name': h.name, 'ip': h.IP(), 'mac': h.MAC()}))
+        except:
+          print("err", json.dumps("host info failed"))
+
+      def net_start():
+        try:
+          net.start()
+          result = []
+          for h in net.hosts:
+            result.append({'name': h.name, 'ip': h.IP(), 'mac': h.MAC()})
+          print("ack", json.dumps(result))
+        except:
+          print("err", json.dumps("start failed"))
+
+      net = Mininet(link=TCLink, switch=OVSBridge, controller=findController())
+    `
+
+      this._python.stdin.write(trim(output))
     }
 
     this._python.stdin.write(trim(cmd))

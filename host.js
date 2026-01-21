@@ -1,6 +1,7 @@
 const net = require('net')
-const split = require('split2')
+const split = require('./split')
 const events = require('events')
+const process = require('process')
 const { parseExtendedTypes, serializeError } = require('./ext')
 
 const sock = net.connect(process.env.MN_SOCK)

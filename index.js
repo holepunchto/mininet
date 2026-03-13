@@ -1,4 +1,4 @@
-const split = require('split2')
+const process = require('process')
 const proc = require('child_process')
 const fs = require('fs')
 const path = require('path')
@@ -6,6 +6,7 @@ const net = require('net')
 const { EventEmitter } = require('events')
 const os = require('os')
 const { parseExtendedTypes, serializeError } = require('./ext')
+const split = require('./split')
 
 class Mininet extends EventEmitter {
   constructor(opts = {}) {
@@ -29,7 +30,7 @@ class Mininet extends EventEmitter {
     this._debug = !!opts.debug
     this._internet = !!opts.internet
     if (opts.clean) this._args.unshift(path.join(__dirname, 'clean.sh'))
-    if (process.getuid() && opts.sudo !== false) {
+    if (os.userInfo().uid && opts.sudo !== false) {
       this._args.unshift('sudo', '-E')
     }
 

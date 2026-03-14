@@ -41,13 +41,13 @@
     "bare-path": "^3.0.0",
     "bare-process": "^4.3.0",
     "bare-subprocess": "^5.2.2",
-    "lunte": "^1.4.0",
     "newline-decoder": "^1.0.2",
-    "prettier-config-holepunch": "^2.0.0",
     "streamx": "^2.23.0"
   },
   "devDependencies": {
-    "prettier": "^3.7.4"
+    "lunte": "^1.6.0",
+    "prettier": "^3.8.1",
+    "prettier-config-holepunch": "^2.0.0"
   },
   "scripts": {
     "format": "prettier . --write",

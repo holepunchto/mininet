@@ -310,6 +310,7 @@ class Host extends EventEmitter {
 
     this.index = index
     this.id = 'h' + (index + 1)
+    this.iface = this.id + '-eth0'
     this.ip = null
     this.mac = null
     this.processes = []
@@ -321,6 +322,18 @@ class Host extends EventEmitter {
       except:
         print("critical", json.dumps("add host failed"))
     `)
+    this.defaultLinkOptions = {}
+  }
+
+  static GetLinkOptions(opts = {}) {
+    let line = ''
+    if (opts.bandwidth) opts.bw = opts.bandwidth
+    if (opts.bw !== undefined) line += ', bw=' + opts.bw
+    if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
+    if (opts.loss !== undefined) line += ', loss=' + opts.loss
+    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
+    if (opts.htb || opts.useHtb) line += ', use_htb=True'
+    return line
   }
 
   _process(id) {
@@ -417,20 +430,38 @@ class Host extends EventEmitter {
     }
   }
 
-  link(to, opts) {
-    if (!opts) opts = {}
+  setNetwork(opts) {
+    const { promise, resolve } = Promise.withResolvers()
+    const args = Host.GetLinkOptions(opts)
+    const cmd = `tc qdisc change dev ${this.iface} root netem ${args}`
+    this.exec(cmd, resolve)
 
-    let line = ''
-    if (opts.bandwidth) opts.bw = opts.bandwidth
-    if (opts.bw !== undefined) line += ', bw=' + opts.bw
-    if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
-    if (opts.loss !== undefined) line += ', loss=' + opts.loss
-    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
-    if (opts.htb || opts.useHtb) line += ', use_htb=True'
+    return promise
+  }
+
+  drop() {
+    return this.setNetwork({ delay: '500ms', loss: 100 })
+  }
+
+  restore() {
+    return this.setNetwork(this.defaultLinkOptions)
+  }
+
+  down() {
+    return this.host.exec(`ip link set ${this.iface} down`)
+  }
+
+  up() {
+    return this.host.exec(`ip link set ${this.iface} up`)
+  }
+
+  link(to, opts) {
+    this.defaultLinkOptions = opts
+    const args = Host.GetLinkOptions(opts)
 
     this._mn._exec(`
       try:
-        net.addLink(${this.id}, ${to.id} ${line})
+        net.addLink(${this.id}, ${to.id} ${args})
       except:
         print("critical", json.dumps("add link failed"))
     `)

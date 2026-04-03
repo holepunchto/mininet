@@ -434,7 +434,10 @@ class Host extends EventEmitter {
     const { promise, resolve } = Promise.withResolvers()
     const args = Host.GetLinkOptions(opts)
     const cmd = `tc qdisc change dev ${this.iface} root netem ${args}`
-    this.exec(cmd, resolve)
+    this.exec(cmd, (err, out) => {
+      if (err) return reject(err)
+      resolve(out)
+    })
 
     return promise
   }
@@ -448,11 +451,21 @@ class Host extends EventEmitter {
   }
 
   down() {
-    return this.host.exec(`ip link set ${this.iface} down`)
+    const { promise, resolve, reject } = Promise.withResolvers()
+    this.exec(`ip link set ${this.iface} down`, (err, out) => {
+      if (err) return reject(err)
+      resolve(out)
+    })
+    return promise
   }
 
   up() {
-    return this.host.exec(`ip link set ${this.iface} up`)
+    const { promise, resolve, reject } = Promise.withResolvers()
+    this.exec(`ip link set ${this.iface} up`, (err, out) => {
+      if (err) return reject(err)
+      resolve(out)
+    })
+    return promise
   }
 
   link(to, opts) {

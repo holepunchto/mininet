@@ -428,7 +428,7 @@ class Host extends EventEmitter {
   }
 
   setNetwork(opts) {
-    const { promise, resolve } = Promise.withResolvers()
+    const { promise, resolve, reject } = Promise.withResolvers()
     const args = Host.GetLinkUpdateOptions(opts)
     const cmd = `tc qdisc change dev ${this.iface} root netem ${args}`
     this.exec(cmd, (err, out) => {
@@ -437,10 +437,6 @@ class Host extends EventEmitter {
     })
 
     return promise
-  }
-
-  drop() {
-    return this.setNetwork({ delay: '500ms', loss: 100 })
   }
 
   restore() {

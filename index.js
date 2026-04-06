@@ -473,7 +473,7 @@ class Host extends EventEmitter {
 
     this._mn._exec(`
       try:
-        net.addLink(${this.id}, ${to.id} ${args})
+        net.addLink(${this.id}, ${to.id} ${line})
       except:
         print("critical", json.dumps("add link failed"))
     `)

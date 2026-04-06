@@ -282,9 +282,7 @@ class Switch {
     `)
   }
 
-  link(to, opts) {
-    if (!opts) opts = {}
-
+  link(to, opts = {}) {
     let line = ''
     if (opts.bandwidth) opts.bw = opts.bandwidth
     if (opts.bw !== undefined) line += ', bw=' + opts.bw
@@ -325,15 +323,14 @@ class Host extends EventEmitter {
     this.defaultLinkOptions = {}
   }
 
-  static GetLinkOptions(opts = {}) {
-    let line = ''
-    if (opts.bandwidth) opts.bw = opts.bandwidth
-    if (opts.bw !== undefined) line += ', bw=' + opts.bw
-    if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
-    if (opts.loss !== undefined) line += ', loss=' + opts.loss
-    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
-    if (opts.htb || opts.useHtb) line += ', use_htb=True'
-    return line
+  static GetLinkUpdateOptions(opts = {}) {
+    // @todo support more options https://man7.org/linux/man-pages/man8/tc-netem.8.html#EXAMPLES
+    const args = []
+    if (opts.delay !== undefined) args.push('delay', opts.delay)
+    if (opts.loss !== undefined) args.push('loss', opts.loss)
+    if (opts.jitter !== undefined) args.push('jitter', opts.jitter)
+
+    return args.join(' ')
   }
 
   _process(id) {
@@ -432,7 +429,7 @@ class Host extends EventEmitter {
 
   setNetwork(opts) {
     const { promise, resolve } = Promise.withResolvers()
-    const args = Host.GetLinkOptions(opts)
+    const args = Host.GetLinkUpdateOptions(opts)
     const cmd = `tc qdisc change dev ${this.iface} root netem ${args}`
     this.exec(cmd, (err, out) => {
       if (err) return reject(err)
@@ -470,7 +467,13 @@ class Host extends EventEmitter {
 
   link(to, opts) {
     this.defaultLinkOptions = opts
-    const args = Host.GetLinkOptions(opts)
+    let line = ''
+    if (opts.bandwidth) opts.bw = opts.bandwidth
+    if (opts.bw !== undefined) line += ', bw=' + opts.bw
+    if (opts.delay !== undefined) line += ', delay=' + JSON.stringify(opts.delay)
+    if (opts.loss !== undefined) line += ', loss=' + opts.loss
+    if (opts.jitter !== undefined) line += ', jitter=' + JSON.stringify(opts.jitter)
+    if (opts.htb || opts.useHtb) line += ', use_htb=True'
 
     this._mn._exec(`
       try:

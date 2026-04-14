@@ -5,7 +5,7 @@ on:
       - v*
 permissions:
   id-token: write
-  contents: read
+  contents: write
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -14,4 +14,4 @@ jobs:
     name: Publish
     steps:
       - uses: holepunchto/actions/node-base@v1
-      - run: npm publish --ignore-scripts
+      - uses: holepunchto/actions/publish@v1
